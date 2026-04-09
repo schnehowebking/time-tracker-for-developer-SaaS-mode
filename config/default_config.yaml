@@ -1,0 +1,42 @@
+tracking:
+  heartbeat_seconds: 10
+  timezone: local
+screenshots:
+  enabled: true
+  interval_seconds_min: 120
+  interval_seconds_max: 300
+  capture_all_displays: true
+  image_format: png
+activity:
+  enabled: true
+  idle_threshold_seconds: 90
+  auto_pause_on_idle: true
+  idle_grace_seconds: 60
+storage:
+  base_dir: data
+  db_name: tracker.db
+  screenshot_dir_name: screenshots
+  runtime_state_file: runtime_state.json
+  pid_file: tracker.pid
+api:
+  host: 127.0.0.1
+  port: 8000
+  dashboard_title: Time Tracker Admin Dashboard
+desktop_ui:
+  refresh_interval_seconds: 5
+security:
+  secret_key: change-this-to-a-long-random-secret
+  cookie_name: tt_session
+  agent_ingest_key: change-this-agent-ingest-key
+monitoring:
+  app_tracking_enabled: true
+  app_tracking_interval_seconds: 10
+  infer_browser_url_from_title: true
+sync:
+  enabled: false
+  endpoint_url: http://127.0.0.1:8000/api/agent/sync
+  interval_seconds: 20
+app:
+  organization_id: 88478d9ec21c41afbc3f6f6c691edb67
+  user_id: a339c572f90a478aac75925b37dc016d
+  project_id: default-project

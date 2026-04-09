@@ -1,0 +1,20 @@
+[project]
+name = "self-hosted-time-tracker"
+version = "0.1.0"
+description = "Configurable cross-platform desktop time tracker with screenshots"
+requires-python = ">=3.11"
+dependencies = [
+  "mss==10.1.0",
+  "pynput==1.8.1",
+  "PyYAML==6.0.2",
+  "fastapi==0.116.1",
+  "uvicorn==0.35.0",
+  "jinja2==3.1.6",
+  "PySide6>=6.10.1,<6.12",
+  "python-multipart==0.0.20",
+  "requests==2.32.3",
+]
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"

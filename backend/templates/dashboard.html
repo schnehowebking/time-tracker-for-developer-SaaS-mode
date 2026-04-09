@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ title }}</title>
+  <link rel="stylesheet" href="/static/dashboard.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>{{ title }}</h1>
+    <div class="actions">
+      <span>{{ auth_user.full_name }} ({{ auth_user.role }})</span>
+      <a href="/users" style="color:white;">Users</a>
+      <button id="startBtn">Start Tracker</button>
+      <button id="stopBtn" class="danger">Stop Tracker</button>
+      <form method="post" action="/auth/logout"><button type="submit" class="danger">Logout</button></form>
+    </div>
+  </header>
+
+  <section class="status-row">
+    <div class="card">
+      <h2>Agent Status</h2>
+      <p><strong>Running:</strong> {{ "Yes" if status.running else "No" }}</p>
+      <p><strong>PID:</strong> {{ status.running_pid or "-" }}</p>
+      <p><strong>Session:</strong> {{ status.open_session.id if status.open_session else "-" }}</p>
+    </div>
+    <div class="card">
+      <h2>Summary ({{ days }} days)</h2>
+      <p><strong>Tracked Time:</strong> {{ summary.total_tracked_seconds }} sec</p>
+      <p><strong>Sessions:</strong> {{ summary.total_sessions }}</p>
+      <p><strong>Activity Events:</strong> {{ summary.total_activity_events }}</p>
+      <p><strong>Screenshots:</strong> {{ summary.total_screenshots }}</p>
+      <p><strong>Active Users:</strong> {{ summary.active_users }}</p>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Daily Tracked Seconds</h2>
+    <div id="dailyChart" class="chart"></div>
+  </section>
+
+  <section class="grid-2">
+    <article class="card">
+      <h2>Top Projects ({{ days }} days)</h2>
+      <table>
+        <thead>
+          <tr><th>Project</th><th>Tracked Seconds</th></tr>
+        </thead>
+        <tbody>
+          {% for row in projects %}
+          <tr>
+            <td>{{ row.project_id }}</td>
+            <td>{{ row.tracked_seconds }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </article>
+    <article class="card">
+      <h2>Recent Sessions</h2>
+      <table>
+        <thead>
+          <tr><th>ID</th><th>User</th><th>Project</th><th>Tracked</th><th>Started</th><th>Edit</th></tr>
+        </thead>
+        <tbody>
+          {% for item in sessions %}
+          <tr>
+            <td class="mono">{{ item.id[:8] }}</td>
+            <td>{{ item.user_id }}</td>
+            <td>{{ item.project_id }}</td>
+            <td>{{ item.tracked_seconds }}</td>
+            <td>{{ item.started_at }}</td>
+            <td>
+              {% if auth_user.role in ["owner","admin"] %}
+              <form method="post" action="/sessions/{{ item.id }}/edit">
+                <input type="number" name="new_tracked_seconds" min="0" value="{{ item.tracked_seconds }}" style="width:120px;" />
+                <input type="text" name="reason" placeholder="reason" style="width:120px;" />
+                <button type="submit">Save</button>
+              </form>
+              {% else %}
+              -
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </article>
+  </section>
+
+  <section class="grid-2">
+    <article class="card">
+      <h2>Top Apps ({{ days }} days)</h2>
+      <table>
+        <thead><tr><th>App</th><th>Entries</th></tr></thead>
+        <tbody>
+          {% for row in app_usage %}
+          <tr><td>{{ row.app_name }}</td><td>{{ row.entries }}</td></tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </article>
+    <article class="card">
+      <h2>Recent Manual Time Edits</h2>
+      <table>
+        <thead><tr><th>Session</th><th>Old</th><th>New</th><th>Reason</th><th>At</th></tr></thead>
+        <tbody>
+          {% for row in time_edits %}
+          <tr>
+            <td class="mono">{{ row.session_id[:8] }}</td>
+            <td>{{ row.old_tracked_seconds }}</td>
+            <td>{{ row.new_tracked_seconds }}</td>
+            <td>{{ row.reason }}</td>
+            <td>{{ row.edited_at }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </article>
+  </section>
+
+  <script>
+    window.__DAILY_DATA__ = {{ daily|tojson }};
+  </script>
+  <script src="/static/dashboard.js"></script>
+</body>
+</html>

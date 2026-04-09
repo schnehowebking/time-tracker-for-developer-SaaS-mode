@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ title }}</title>
+  <link rel="stylesheet" href="/static/dashboard.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>Create SaaS Workspace</h1>
+  </header>
+  <section class="status-row">
+    <article class="card">
+      <h2>Workspace Registration</h2>
+      {% if has_users %}
+      <p>You can still create another workspace, but each email must be unique.</p>
+      {% endif %}
+      {% if error %}<p style="color:#c81d25;"><strong>{{ error }}</strong></p>{% endif %}
+      <form method="post" action="/auth/register">
+        <p><label>Organization Name</label><br><input name="organization_name" required /></p>
+        <p><label>Your Name</label><br><input name="full_name" required /></p>
+        <p><label>Email</label><br><input type="email" name="email" required /></p>
+        <p><label>Password</label><br><input type="password" name="password" minlength="6" required /></p>
+        <p><button type="submit">Create Workspace</button></p>
+      </form>
+      <p>Already have an account? <a href="/auth/login">Login</a></p>
+    </article>
+  </section>
+</body>
+</html>

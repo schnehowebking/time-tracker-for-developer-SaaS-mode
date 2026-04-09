@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ title }}</title>
+  <link rel="stylesheet" href="/static/dashboard.css" />
+</head>
+<body>
+  <header class="topbar">
+    <h1>User Management</h1>
+    <div class="actions">
+      <a href="/" style="color:white;">Dashboard</a>
+      <form method="post" action="/auth/logout"><button type="submit" class="danger">Logout</button></form>
+    </div>
+  </header>
+
+  <section class="status-row">
+    <article class="card">
+      <h2>Create User</h2>
+      <form method="post" action="/users">
+        <p><label>Full Name</label><br><input name="full_name" required /></p>
+        <p><label>Email</label><br><input type="email" name="email" required /></p>
+        <p><label>Role</label><br>
+          <select name="role">
+            <option value="member">Member</option>
+            <option value="admin">Admin</option>
+          </select>
+        </p>
+        <p><label>Password</label><br><input type="password" name="password" minlength="6" required /></p>
+        <p><button type="submit">Add User</button></p>
+      </form>
+    </article>
+
+    <article class="card">
+      <h2>Team Users</h2>
+      <table>
+        <thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Status</th><th>Action</th></tr></thead>
+        <tbody>
+          {% for u in users %}
+          <tr>
+            <td>{{ u.full_name }}</td>
+            <td>{{ u.email }}</td>
+            <td>{{ u.role }}</td>
+            <td>{{ "Active" if u.is_active else "Disabled" }}</td>
+            <td>
+              {% if u.id != auth_user.id %}
+              <form method="post" action="/users/{{ u.id }}/toggle">
+                <button type="submit">{{ "Disable" if u.is_active else "Enable" }}</button>
+              </form>
+              {% else %}
+              -
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </article>
+  </section>
+</body>
+</html>
